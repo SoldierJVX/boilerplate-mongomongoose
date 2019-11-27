@@ -224,7 +224,12 @@ var findAndUpdate = function(personName, done) {
   const filter = { name: personName };
   const update = { age: ageToSet };
 
-  Person.findOneAndUpdate(filter, update);
+  let data = Person.findOneAndUpdate(filter, update, { new: true },
+    (err, data) => {
+      if (err) return done(err, data);
+      return done(null, data);
+    }
+  );
 };
 
 /** # CRU[D] part IV - DELETE #
@@ -238,8 +243,12 @@ var findAndUpdate = function(personName, done) {
 // As usual, use the function argument `personId` as search key.
 
 var removeById = function(personId, done) {
-  
-  done(null/*, data*/);
+  Person.findByIdAndRemove(personId,
+    (err, data) => {
+      if (err) return done(err, data);
+      return done(null, data);
+    }
+  );
     
 };
 
@@ -255,8 +264,15 @@ var removeById = function(personId, done) {
 
 var removeManyPeople = function(done) {
   var nameToRemove = "Mary";
-
-  done(null/*, data*/);
+  
+  let filter = {name: nameToRemove} 
+  
+  Person.deleteMany(filter,
+    (err, data) => {
+      if (err) return done(err, data);
+      return done(null, data);
+    }
+  );
 };
 
 /** # C[R]UD part V -  More about Queries # 
@@ -280,7 +296,14 @@ var removeManyPeople = function(done) {
 var queryChain = function(done) {
   var foodToSearch = "burrito";
   
-  done(null/*, data*/);
+  Person.find({ favoriteFoods: foodToSearch })
+  .sort({ name: 1 })
+  .limit(2)
+  .select({ age: 0 })
+  .exec(function(err, people) {
+    console.log(people)
+    return done(err, people)
+  });
 };
 
 /** **Well Done !!**
