@@ -159,9 +159,10 @@ var findOneByFood = function(food, done) {
 // Use the function argument 'personId' as search key.
 
 var findPersonById = function(personId, done) {
-  
-  done(null/*, data*/);
-  
+  Person.findById(personId , function (err, data) {
+    if (err) return console.log(err);
+    done(null, data);
+  });
 };
 
 /** # CR[U]D part III - UPDATE # 
@@ -191,8 +192,15 @@ var findPersonById = function(personId, done) {
 
 var findEditThenSave = function(personId, done) {
   var foodToAdd = 'hamburger';
-  
-  done(null/*, data*/);
+  Person.findById(personId , function (err, data) {
+    if (err) return console.log(err);
+    
+    data.favoriteFoods.push(foodToAdd);
+    data.save(function(err, data) {
+      if (err) return console.error(err);
+      done(null, data)
+    });
+  });
 };
 
 /** 9) New Update : Use `findOneAndUpdate()` */
@@ -212,8 +220,11 @@ var findEditThenSave = function(personId, done) {
 
 var findAndUpdate = function(personName, done) {
   var ageToSet = 20;
+  
+  const filter = { name: personName };
+  const update = { age: ageToSet };
 
-  done(null/*, data*/);
+  Person.findOneAndUpdate(filter, update);
 };
 
 /** # CRU[D] part IV - DELETE #
